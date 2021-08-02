@@ -1,7 +1,6 @@
 package com.mertfatih.mvvmtodo.data
 
 import androidx.room.*
-import com.mertfatih.mvvmtodo.ui.tasks.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
