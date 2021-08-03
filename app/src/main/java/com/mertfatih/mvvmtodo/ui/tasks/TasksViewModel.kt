@@ -7,6 +7,8 @@ import com.mertfatih.mvvmtodo.data.PreferencesManager
 import com.mertfatih.mvvmtodo.data.SortOrder
 import com.mertfatih.mvvmtodo.data.Task
 import com.mertfatih.mvvmtodo.data.TaskDao
+import com.mertfatih.mvvmtodo.ui.ADD_TASK_RESULT_OK
+import com.mertfatih.mvvmtodo.ui.EDIT_TASK_RESULT_OK
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -19,7 +21,7 @@ class TasksViewModel @ViewModelInject constructor(
     private val taskDao: TaskDao,
     private val preferencesManager: PreferencesManager,
     @Assisted private val state: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     val searchQuery = state.getLiveData("searchQuery", "")
 
@@ -60,7 +62,7 @@ class TasksViewModel @ViewModelInject constructor(
         tasksEventChannel.send(TasksEvent.ShowUndoDeleteMessage(task))
     }
 
-    fun onUndoDeleteClick(task: Task)  = viewModelScope.launch {
+    fun onUndoDeleteClick(task: Task) = viewModelScope.launch {
         taskDao.insert(task)
     }
 
@@ -68,11 +70,29 @@ class TasksViewModel @ViewModelInject constructor(
         tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
     }
 
+    fun onAddEditResult(result: Int) {
+        when (result) {
+            ADD_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task added")
+            EDIT_TASK_RESULT_OK -> showTaskSavedConfirmationMessage("Task updated")
+
+        }
+    }
+
+    private fun showTaskSavedConfirmationMessage(text: String) = viewModelScope.launch {
+        tasksEventChannel.send(TasksEvent.ShowTaskSavedConfirmationMessage(text))
+    }
+
+    fun onDeleteAllCompletedClick() = viewModelScope.launch {
+        tasksEventChannel.send(TasksEvent.NavigateToDeleteAllCompletedScreen)
+    }
+
     sealed class TasksEvent {
 
-        object NavigateToAddTaskScreen: TasksEvent()
-        data class NavigateToEditTaskScreen(val task: Task): TasksEvent()
-        data class ShowUndoDeleteMessage(val task: Task): TasksEvent()
+        object NavigateToAddTaskScreen : TasksEvent()
+        data class NavigateToEditTaskScreen(val task: Task) : TasksEvent()
+        data class ShowUndoDeleteMessage(val task: Task) : TasksEvent()
+        data class ShowTaskSavedConfirmationMessage(val msg: String) : TasksEvent()
+        object NavigateToDeleteAllCompletedScreen : TasksEvent()
     }
 
 }
