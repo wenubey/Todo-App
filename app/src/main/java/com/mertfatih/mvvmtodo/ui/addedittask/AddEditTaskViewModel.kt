@@ -1,7 +1,6 @@
 package com.mertfatih.mvvmtodo.ui.addedittask
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,13 +8,17 @@ import com.mertfatih.mvvmtodo.data.Task
 import com.mertfatih.mvvmtodo.data.TaskDao
 import com.mertfatih.mvvmtodo.ui.ADD_TASK_RESULT_OK
 import com.mertfatih.mvvmtodo.ui.EDIT_TASK_RESULT_OK
+import dagger.assisted.Assisted
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddEditTaskViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AddEditTaskViewModel @Inject constructor(
     private val taskDao: TaskDao,
-    @Assisted private val state: SavedStateHandle
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
     val task = state.get<Task>("task")

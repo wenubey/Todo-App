@@ -1,7 +1,5 @@
 package com.mertfatih.mvvmtodo.ui.tasks
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.mertfatih.mvvmtodo.data.PreferencesManager
 import com.mertfatih.mvvmtodo.data.SortOrder
@@ -9,18 +7,21 @@ import com.mertfatih.mvvmtodo.data.Task
 import com.mertfatih.mvvmtodo.data.TaskDao
 import com.mertfatih.mvvmtodo.ui.ADD_TASK_RESULT_OK
 import com.mertfatih.mvvmtodo.ui.EDIT_TASK_RESULT_OK
+import dagger.assisted.Assisted
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class TasksViewModel @ViewModelInject constructor(
+@HiltViewModel
+class TasksViewModel @Inject constructor(
     private val taskDao: TaskDao,
     private val preferencesManager: PreferencesManager,
-    @Assisted private val state: SavedStateHandle
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
     val searchQuery = state.getLiveData("searchQuery", "")
